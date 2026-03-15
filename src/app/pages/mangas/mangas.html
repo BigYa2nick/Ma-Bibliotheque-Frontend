@@ -1,0 +1,55 @@
+<div class="min-h-screen bg-gray-950">
+
+  <header class="bg-gray-900 border-b border-gray-800 px-6 py-4 flex justify-between items-center">
+    <h1 class="text-xl font-bold text-white">MaBibliothèque.</h1>
+    <div class="flex items-center gap-4">
+      <a routerLink="/livres" class="text-gray-400 hover:text-white text-sm">Livres</a>
+      <a routerLink="/mangas" class="text-violet-400 text-sm font-semibold">Mangas</a>
+      @if (user?.role === 'admin') {
+        <a routerLink="/admin" class="text-violet-400 hover:text-violet-300 text-sm">Admin</a>
+      }
+      <a routerLink="/profil" class="text-gray-400 hover:text-white text-sm">Profil</a>
+      <button (click)="logout()" class="text-red-400 hover:text-red-300 text-sm">Déconnexion</button>
+    </div>
+  </header>
+
+  <main class="max-w-6xl mx-auto px-6 py-8">
+
+    <input
+      type="text"
+      placeholder="Rechercher un manga ou un auteur..."
+      (input)="filtrer($event)"
+      class="w-full bg-gray-900 border border-gray-700 text-white rounded-xl px-5 py-3 focus:outline-none focus:border-violet-500 transition mb-8"
+    >
+
+    @if (loading) {
+      <div class="text-center text-gray-400 py-20">Chargement...</div>
+    }
+
+    @if (!loading) {
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+        @for (manga of mangasFiltres; track manga.MANGA_ID) {
+          <a [routerLink]="['/mangas', manga.MANGA_ID]"
+            class="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden hover:border-violet-500 transition cursor-pointer block">
+            <img [src]="manga.IMAGE_URL" [alt]="manga.TITRE" class="w-full h-48 object-cover">
+            <div class="p-3">
+              <h3 class="text-white text-sm font-semibold truncate">{{ manga.TITRE }}</h3>
+              <p class="text-gray-400 text-xs mt-1 truncate">{{ manga.AUTEUR }}</p>
+              <div class="flex justify-between items-center mt-2">
+                <span class="text-xs bg-pink-900/50 text-pink-300 px-2 py-0.5 rounded-full">
+                  {{ manga.GENRE }}
+                </span>
+                <span class="text-xs text-gray-500">{{ manga.NB_TOMES }} tomes</span>
+              </div>
+            </div>
+          </a>
+        }
+      </div>
+    }
+
+    @if (!loading && mangasFiltres.length === 0) {
+      <div class="text-center text-gray-500 py-20">Aucun manga trouvé.</div>
+    }
+
+  </main>
+</div>

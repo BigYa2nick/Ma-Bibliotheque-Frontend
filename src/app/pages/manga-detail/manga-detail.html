@@ -1,0 +1,73 @@
+<div class="min-h-screen bg-gray-950">
+
+  <header class="bg-gray-900 border-b border-gray-800 px-6 py-4 flex justify-between items-center">
+    <a routerLink="/mangas" class="text-gray-400 hover:text-white text-sm">← Retour aux mangas</a>
+    <h1 class="text-xl font-bold text-white">MaBibliothèque.</h1>
+  </header>
+
+  <main class="max-w-4xl mx-auto px-6 py-8">
+
+    @if (manga) {
+      <div class="flex gap-6 mb-10">
+        <img [src]="manga.IMAGE_URL" [alt]="manga.TITRE" class="w-32 h-48 object-cover rounded-xl">
+        <div>
+          <h2 class="text-3xl font-bold text-white">{{ manga.TITRE }}</h2>
+          <p class="text-gray-400 mt-1">{{ manga.AUTEUR }}</p>
+          <span class="inline-block mt-2 text-xs bg-pink-900/50 text-pink-300 px-3 py-1 rounded-full">
+            {{ manga.GENRE }}
+          </span>
+          <p class="text-gray-400 text-sm mt-3">{{ manga.DESCRIPTION }}</p>
+        </div>
+      </div>
+    }
+
+    @if (message) {
+      <div class="bg-green-900/40 border border-green-700 text-green-400 text-sm rounded-lg px-4 py-3 mb-6">
+        {{ message }}
+      </div>
+    }
+    @if (erreur) {
+      <div class="bg-red-900/40 border border-red-700 text-red-400 text-sm rounded-lg px-4 py-3 mb-6">
+        {{ erreur }}
+      </div>
+    }
+
+    <h3 class="text-white font-semibold text-lg mb-4">Tomes disponibles</h3>
+
+    @if (loading) {
+      <div class="text-gray-400">Chargement...</div>
+    }
+
+    <div class="grid grid-cols-1 gap-3">
+      @for (tome of tomes; track tome.TOME_ID) {
+        <div class="bg-gray-900 border border-gray-800 rounded-xl px-5 py-4 flex justify-between items-center">
+          <div>
+            <p class="text-white font-semibold">{{ tome.TITRE }}</p>
+            @if (tome.EMPRUNTE && !tome.MON_EMPRUNT) {
+              <span class="text-xs text-red-400">Non disponible</span>
+            }
+            @if (!tome.EMPRUNTE) {
+              <span class="text-xs text-green-400">Disponible</span>
+            }
+            @if (tome.MON_EMPRUNT) {
+              <span class="text-xs text-violet-400">Emprunté par vous</span>
+            }
+          </div>
+          @if (!tome.EMPRUNTE) {
+            <button (click)="emprunter(tome.TOME_ID)"
+              class="text-xs bg-violet-600 hover:bg-violet-500 text-white px-4 py-2 rounded-lg transition">
+              Emprunter
+            </button>
+          }
+          @if (tome.MON_EMPRUNT) {
+            <button (click)="rendre(tome.ID_EMPRUNT)"
+              class="text-xs bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition">
+              Rendre
+            </button>
+          }
+        </div>
+      }
+    </div>
+
+  </main>
+</div>

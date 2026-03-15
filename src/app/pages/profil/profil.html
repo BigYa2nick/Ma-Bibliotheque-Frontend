@@ -1,0 +1,107 @@
+<div class="min-h-screen bg-gray-950">
+
+  <header class="bg-gray-900 border-b border-gray-800 px-6 py-4 flex justify-between items-center">
+    <a routerLink="/livres" class="text-xl font-bold text-white">MaBibliothèque.</a>
+    <button (click)="logout()" class="text-red-400 hover:text-red-300 text-sm">Déconnexion</button>
+  </header>
+
+  <main class="max-w-5xl mx-auto px-6 py-8">
+
+    <!-- Infos utilisateur -->
+    <div class="bg-gray-900 border border-gray-800 rounded-2xl p-6 mb-8">
+      <div class="flex items-center gap-4 mb-4">
+        <div class="w-14 h-14 rounded-full bg-violet-900 flex items-center justify-center text-white text-xl font-bold">
+          {{ user?.prenom?.charAt(0) }}{{ user?.nom?.charAt(0) }}
+        </div>
+        <div>
+          <h2 class="text-white text-lg font-bold">{{ user?.prenom }} {{ user?.nom }}</h2>
+          <p class="text-gray-400 text-sm">{{ user?.email }}</p>
+        </div>
+        <div class="ml-auto text-right">
+          <p class="text-gray-500 text-xs">Score fidélité</p>
+          <p class="text-violet-400 text-2xl font-bold">{{ user?.score }} pts</p>
+        </div>
+      </div>
+    </div>
+
+    @if (message) {
+      <div class="bg-green-900/40 border border-green-700 text-green-400 text-sm rounded-lg px-4 py-3 mb-6">
+        {{ message }}
+      </div>
+    }
+    @if (erreur) {
+      <div class="bg-red-900/40 border border-red-700 text-red-400 text-sm rounded-lg px-4 py-3 mb-6">
+        {{ erreur }}
+      </div>
+    }
+
+    <!-- Emprunts côte à côte -->
+    <div class="flex gap-8">
+
+      <!-- Livres empruntés -->
+      <div class="flex-1">
+        <div class="flex items-center gap-3 mb-4">
+          <h3 class="text-white font-semibold text-lg">Livres empruntés</h3>
+          <span class="text-xs bg-violet-900/50 text-violet-300 px-2 py-0.5 rounded-full">
+            {{ empruntsLivres.length }}
+          </span>
+        </div>
+
+        <div class="bg-gray-900 border border-gray-800 rounded-2xl p-4">
+          @if (empruntsLivres.length === 0) {
+            <p class="text-gray-500 text-sm text-center py-6">Aucun livre emprunté.</p>
+          }
+          @for (emprunt of empruntsLivres; track emprunt.ID_EMPRUNT) {
+            <div class="flex justify-between items-center border-b border-gray-800 py-3 last:border-0">
+              <div>
+                <p class="text-white text-sm font-semibold">{{ emprunt.TITRE }}</p>
+                <p class="text-gray-400 text-xs">
+                  Le {{ emprunt.DATE_EMPRUNT | date:'dd/MM/yyyy' }} — {{ emprunt.DELAI }}j
+                </p>
+              </div>
+              <button (click)="rendreLivre(emprunt.ID_EMPRUNT)"
+                class="text-xs bg-violet-600 hover:bg-violet-500 text-white px-3 py-1.5 rounded-lg transition">
+                Rendre
+              </button>
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Barre de séparation -->
+      <div class="w-px bg-gray-800 self-stretch"></div>
+
+      <!-- Tomes empruntés -->
+      <div class="flex-1">
+        <div class="flex items-center gap-3 mb-4">
+          <h3 class="text-white font-semibold text-lg">Mangas empruntés</h3>
+          <span class="text-xs bg-pink-900/50 text-pink-300 px-2 py-0.5 rounded-full">
+            {{ empruntsTomes.length }}
+          </span>
+        </div>
+
+        <div class="bg-gray-900 border border-gray-800 rounded-2xl p-4">
+          @if (empruntsTomes.length === 0) {
+            <p class="text-gray-500 text-sm text-center py-6">Aucun manga emprunté.</p>
+          }
+          @for (emprunt of empruntsTomes; track emprunt.ID_EMPRUNT) {
+            <div class="flex justify-between items-center border-b border-gray-800 py-3 last:border-0">
+              <div>
+                <p class="text-white text-sm font-semibold">{{ emprunt.TITRE }}</p>
+                <p class="text-pink-400 text-xs">{{ emprunt.MANGA }}</p>
+                <p class="text-gray-400 text-xs">
+                  Le {{ emprunt.DATE_EMPRUNT | date:'dd/MM/yyyy' }} — {{ emprunt.DELAI }}j
+                </p>
+              </div>
+              <button (click)="rendreTome(emprunt.ID_EMPRUNT)"
+                class="text-xs bg-pink-600 hover:bg-pink-500 text-white px-3 py-1.5 rounded-lg transition">
+                Rendre
+              </button>
+            </div>
+          }
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>

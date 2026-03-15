@@ -1,0 +1,66 @@
+<div class="min-h-screen bg-gray-950 flex items-center justify-center px-4">
+  <div class="bg-gray-900 border border-gray-800 rounded-2xl p-8 w-full max-w-md">
+
+    <div class="mb-8 text-center">
+      <h1 class="text-2xl font-bold text-white">MaBibliothèque.</h1>
+      <p class="text-gray-400 mt-2">Créez votre compte</p>
+    </div>
+
+    @if (erreur) {
+      <div class="bg-red-900/40 border border-red-700 text-red-400 text-sm rounded-lg px-4 py-3 mb-4">
+        {{ erreur }}
+      </div>
+    }
+
+    <form (ngSubmit)="onSubmit()" class="flex flex-col gap-4">
+
+      <div class="grid grid-cols-2 gap-3">
+        <div class="flex flex-col gap-1">
+          <label class="text-gray-300 text-sm">Nom</label>
+          <input type="text" [(ngModel)]="nom" name="nom" required
+            placeholder="Dupont"
+            class="bg-gray-800 border border-gray-700 text-white rounded-lg px-4 py-3 focus:outline-none focus:border-violet-500 transition">
+        </div>
+        <div class="flex flex-col gap-1">
+          <label class="text-gray-300 text-sm">Prénom</label>
+          <input type="text" [(ngModel)]="prenom" name="prenom" required
+            placeholder="Jean"
+            class="bg-gray-800 border border-gray-700 text-white rounded-lg px-4 py-3 focus:outline-none focus:border-violet-500 transition">
+        </div>
+      </div>
+
+      <div class="flex flex-col gap-1">
+        <label class="text-gray-300 text-sm">Email</label>
+        <input type="email" [(ngModel)]="email" name="email" required
+          placeholder="exemple@email.com"
+          class="bg-gray-800 border border-gray-700 text-white rounded-lg px-4 py-3 focus:outline-none focus:border-violet-500 transition">
+      </div>
+
+      <div class="flex flex-col gap-1">
+        <label class="text-gray-300 text-sm">Téléphone (optionnel)</label>
+        <input type="tel" [(ngModel)]="tel" name="tel"
+          placeholder="0701020304"
+          class="bg-gray-800 border border-gray-700 text-white rounded-lg px-4 py-3 focus:outline-none focus:border-violet-500 transition">
+      </div>
+
+      <div class="flex flex-col gap-1">
+        <label class="text-gray-300 text-sm">Mot de passe</label>
+        <input type="password" [(ngModel)]="password" name="password" required
+          placeholder="••••••••"
+          class="bg-gray-800 border border-gray-700 text-white rounded-lg px-4 py-3 focus:outline-none focus:border-violet-500 transition">
+      </div>
+
+      <button type="submit" [disabled]="loading"
+        class="mt-2 bg-violet-600 hover:bg-violet-500 disabled:opacity-50 text-white font-semibold py-3 rounded-lg transition">
+        {{ loading ? 'Inscription...' : "S'inscrire" }}
+      </button>
+
+    </form>
+
+    <p class="text-center text-gray-500 text-sm mt-6">
+      Déjà inscrit ?
+      <a routerLink="/login" class="text-violet-400 hover:text-violet-300">Se connecter</a>
+    </p>
+
+  </div>
+</div>

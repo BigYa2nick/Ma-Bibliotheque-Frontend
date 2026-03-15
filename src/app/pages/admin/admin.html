@@ -1,0 +1,304 @@
+<div class="min-h-screen bg-gray-950">
+
+  <header class="bg-gray-900 border-b border-gray-800 px-6 py-4 flex justify-between items-center">
+    <h1 class="text-xl font-bold text-white">Admin — MaBibliothèque.</h1>
+    <div class="flex gap-4">
+      <a routerLink="/livres" class="text-gray-400 hover:text-white text-sm">Voir le site</a>
+      <button (click)="logout()" class="text-red-400 hover:text-red-300 text-sm">Déconnexion</button>
+    </div>
+  </header>
+
+  <main class="max-w-screen-xl mx-auto px-6 py-8">
+
+    @if (message) {
+      <div class="bg-green-900/40 border border-green-700 text-green-400 text-sm rounded-lg px-4 py-3 mb-6">
+        {{ message }}
+      </div>
+    }
+
+    <!-- Onglets -->
+    <div class="flex gap-3 mb-8">
+      <button (click)="onglet = 'catalogue'"
+        [class]="onglet === 'catalogue' ? 'bg-violet-600 text-white' : 'bg-gray-900 text-gray-400 border border-gray-700'"
+        class="px-5 py-2 rounded-lg text-sm transition">
+        Catalogue
+      </button>
+      <button (click)="onglet = 'ajouter'"
+        [class]="onglet === 'ajouter' ? 'bg-violet-600 text-white' : 'bg-gray-900 text-gray-400 border border-gray-700'"
+        class="px-5 py-2 rounded-lg text-sm transition">
+        Ajouter
+      </button>
+      <button (click)="onglet = 'users'"
+        [class]="onglet === 'users' ? 'bg-violet-600 text-white' : 'bg-gray-900 text-gray-400 border border-gray-700'"
+        class="px-5 py-2 rounded-lg text-sm transition">
+        Utilisateurs ({{ users.length }})
+      </button>
+    </div>
+
+    <!-- CATALOGUE — Livres | Mangas côte à côte -->
+    @if (onglet === 'catalogue') {
+      <div class="flex gap-8">
+
+        <!-- Livres -->
+<div class="flex-1">
+  <div class="flex items-center gap-3 mb-4">
+    <h2 class="text-white text-lg font-semibold">Livres</h2>
+    <span class="text-xs bg-violet-900/50 text-violet-300 px-2 py-0.5 rounded-full">{{ livres.length }}</span>
+  </div>
+  <div class="flex flex-col gap-3">
+    @for (livre of livres; track livre.LIVRE_ID) {
+
+      @if (livreEnEdition?.LIVRE_ID === livre.LIVRE_ID) {
+        <!-- Mode édition -->
+        <div class="bg-gray-900 border border-violet-500 rounded-xl px-4 py-4 flex flex-col gap-3">
+          <input type="text" [(ngModel)]="livreEnEdition.TITRE" name="etitreL{{livre.LIVRE_ID}}"
+            class="bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-violet-500">
+          <input type="number" [(ngModel)]="livreEnEdition.ANNEE" name="eanneeL{{livre.LIVRE_ID}}"
+            placeholder="Année"
+            class="bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-violet-500">
+          <input type="text" [(ngModel)]="livreEnEdition.RESUME" name="eresumeL{{livre.LIVRE_ID}}"
+            placeholder="Résumé"
+            class="bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-violet-500">
+          <input type="text" [(ngModel)]="livreEnEdition.IMAGE_URL" name="eimgL{{livre.LIVRE_ID}}"
+            placeholder="URL image"
+            class="bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-violet-500">
+          <div class="flex gap-2">
+            <button (click)="sauvegarderLivre()"
+              class="flex-1 bg-violet-600 hover:bg-violet-500 text-white text-xs py-2 rounded-lg transition">
+              Sauvegarder
+            </button>
+            <button (click)="annulerEditionLivre()"
+              class="flex-1 bg-gray-700 hover:bg-gray-600 text-white text-xs py-2 rounded-lg transition">
+              Annuler
+            </button>
+          </div>
+        </div>
+      } @else {
+        <!-- Mode affichage -->
+        <div class="bg-gray-900 border border-gray-800 rounded-xl px-4 py-3 flex justify-between items-center">
+          <div class="flex gap-3 items-center">
+            <img [src]="livre.IMAGE_URL" class="w-10 h-14 object-cover rounded">
+            <div>
+              <p class="text-white text-sm font-semibold">{{ livre.TITRE }}</p>
+              <p class="text-gray-400 text-xs">{{ livre.AUTEUR }}</p>
+            </div>
+          </div>
+          <div class="flex gap-2">
+            <button (click)="editerLivre(livre)"
+              class="text-xs bg-violet-900/50 hover:bg-violet-800 text-violet-300 px-3 py-1.5 rounded-lg transition">
+              Modifier
+            </button>
+            <button (click)="supprimerLivre(livre.LIVRE_ID)"
+              class="text-xs bg-red-900/50 hover:bg-red-800 text-red-400 px-3 py-1.5 rounded-lg transition">
+              Supprimer
+            </button>
+          </div>
+        </div>
+      }
+    }
+  </div>
+</div>
+
+        <!-- Barre de séparation -->
+        <div class="w-px bg-gray-800 self-stretch"></div>
+
+        <!-- Mangas -->
+<div class="flex-1">
+  <div class="flex items-center gap-3 mb-4">
+    <h2 class="text-white text-lg font-semibold">Mangas</h2>
+    <span class="text-xs bg-pink-900/50 text-pink-300 px-2 py-0.5 rounded-full">{{ mangas.length }}</span>
+  </div>
+  <div class="flex flex-col gap-3">
+    @for (manga of mangas; track manga.MANGA_ID) {
+
+      @if (mangaEnEdition?.MANGA_ID === manga.MANGA_ID) {
+        <!-- Mode édition -->
+        <div class="bg-gray-900 border border-pink-500 rounded-xl px-4 py-4 flex flex-col gap-3">
+          <input type="text" [(ngModel)]="mangaEnEdition.TITRE" name="etitreM{{manga.MANGA_ID}}"
+            class="bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-pink-500">
+          <input type="text" [(ngModel)]="mangaEnEdition.AUTEUR" name="eauteurM{{manga.MANGA_ID}}"
+            placeholder="Auteur"
+            class="bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-pink-500">
+          <input type="text" [(ngModel)]="mangaEnEdition.GENRE" name="egenreM{{manga.MANGA_ID}}"
+            placeholder="Genre"
+            class="bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-pink-500">
+          <input type="text" [(ngModel)]="mangaEnEdition.IMAGE_URL" name="eimgM{{manga.MANGA_ID}}"
+            placeholder="URL image"
+            class="bg-gray-800 border border-gray-700 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-pink-500">
+          <div class="flex gap-2">
+            <button (click)="sauvegarderManga()"
+              class="flex-1 bg-pink-600 hover:bg-pink-500 text-white text-xs py-2 rounded-lg transition">
+              Sauvegarder
+            </button>
+            <button (click)="annulerEditionManga()"
+              class="flex-1 bg-gray-700 hover:bg-gray-600 text-white text-xs py-2 rounded-lg transition">
+              Annuler
+            </button>
+          </div>
+        </div>
+      } @else {
+        <!-- Mode affichage -->
+        <div class="bg-gray-900 border border-gray-800 rounded-xl px-4 py-3 flex justify-between items-center">
+          <div class="flex gap-3 items-center">
+            <img [src]="manga.IMAGE_URL" class="w-10 h-14 object-cover rounded">
+            <div>
+              <p class="text-white text-sm font-semibold">{{ manga.TITRE }}</p>
+              <p class="text-gray-400 text-xs">{{ manga.AUTEUR }} — {{ manga.NB_TOMES }} tomes</p>
+            </div>
+          </div>
+          <div class="flex gap-2">
+            <button (click)="editerManga(manga)"
+              class="text-xs bg-pink-900/50 hover:bg-pink-800 text-pink-300 px-3 py-1.5 rounded-lg transition">
+              Modifier
+            </button>
+            <button (click)="supprimerManga(manga.MANGA_ID)"
+              class="text-xs bg-red-900/50 hover:bg-red-800 text-red-400 px-3 py-1.5 rounded-lg transition">
+              Supprimer
+            </button>
+          </div>
+        </div>
+      }
+    }
+  </div>
+</div>
+
+      </div>
+    }
+
+    <!-- AJOUTER — Livres | Mangas côte à côte -->
+    @if (onglet === 'ajouter') {
+      <div class="flex gap-8">
+
+        <!-- Ajouter Livre -->
+        <div class="flex-1">
+          <h2 class="text-white text-lg font-semibold mb-4">Ajouter un livre</h2>
+          <div class="bg-gray-900 border border-gray-800 rounded-2xl p-6">
+            <form (ngSubmit)="ajouterLivre()" class="flex flex-col gap-4">
+              <div class="flex flex-col gap-1">
+                <label class="text-gray-300 text-sm">Titre</label>
+                <input type="text" [(ngModel)]="nouveauLivre.titre" name="titre" required
+                  class="bg-gray-800 border border-gray-700 text-white rounded-lg px-4 py-3 focus:outline-none focus:border-violet-500 transition">
+              </div>
+              <div class="flex flex-col gap-1">
+                <label class="text-gray-300 text-sm">Année</label>
+                <input type="number" [(ngModel)]="nouveauLivre.annee" name="annee"
+                  class="bg-gray-800 border border-gray-700 text-white rounded-lg px-4 py-3 focus:outline-none focus:border-violet-500 transition">
+              </div>
+              <div class="flex flex-col gap-1">
+                <label class="text-gray-300 text-sm">Résumé</label>
+                <textarea [(ngModel)]="nouveauLivre.resume" name="resume" rows="3"
+                  class="bg-gray-800 border border-gray-700 text-white rounded-lg px-4 py-3 focus:outline-none focus:border-violet-500 transition"></textarea>
+              </div>
+              <div class="flex flex-col gap-1">
+                <label class="text-gray-300 text-sm">Image de couverture</label>
+                <input type="file" accept="image/*" (change)="onFileLivreSelected($event)"
+                  class="bg-gray-800 border border-gray-700 text-white rounded-lg px-4 py-3 focus:outline-none focus:border-violet-500 transition file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:bg-violet-600 file:text-white file:text-xs cursor-pointer">
+              </div>
+              <button type="submit"
+                class="bg-violet-600 hover:bg-violet-500 text-white font-semibold py-3 rounded-lg transition">
+                Ajouter le livre
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <!-- Barre de séparation -->
+        <div class="w-px bg-gray-800 self-stretch"></div>
+
+        <!-- Ajouter Manga + Tome -->
+        <div class="flex-1">
+          <h2 class="text-white text-lg font-semibold mb-4">Ajouter un manga</h2>
+          <div class="bg-gray-900 border border-gray-800 rounded-2xl p-6 mb-6">
+            <form (ngSubmit)="ajouterManga()" class="flex flex-col gap-4">
+              <div class="flex flex-col gap-1">
+                <label class="text-gray-300 text-sm">Titre de la série</label>
+                <input type="text" [(ngModel)]="nouveauManga.titre" name="mtitре" required
+                  class="bg-gray-800 border border-gray-700 text-white rounded-lg px-4 py-3 focus:outline-none focus:border-pink-500 transition">
+              </div>
+              <div class="flex flex-col gap-1">
+                <label class="text-gray-300 text-sm">Auteur</label>
+                <input type="text" [(ngModel)]="nouveauManga.auteur" name="mauteur" required
+                  class="bg-gray-800 border border-gray-700 text-white rounded-lg px-4 py-3 focus:outline-none focus:border-pink-500 transition">
+              </div>
+              <div class="flex flex-col gap-1">
+                <label class="text-gray-300 text-sm">Genre</label>
+                <input type="text" [(ngModel)]="nouveauManga.genre" name="mgenre"
+                  placeholder="Shonen, Seinen, Shojo..."
+                  class="bg-gray-800 border border-gray-700 text-white rounded-lg px-4 py-3 focus:outline-none focus:border-pink-500 transition">
+              </div>
+              <div class="flex flex-col gap-1">
+                <label class="text-gray-300 text-sm">Description</label>
+                <textarea [(ngModel)]="nouveauManga.description" name="mdesc" rows="3"
+                  class="bg-gray-800 border border-gray-700 text-white rounded-lg px-4 py-3 focus:outline-none focus:border-pink-500 transition"></textarea>
+              </div>
+              <div class="flex flex-col gap-1">
+                <label class="text-gray-300 text-sm">Image de couverture</label>
+                <input type="file" accept="image/*" (change)="onFileMangaSelected($event)"
+                  class="bg-gray-800 border border-gray-700 text-white rounded-lg px-4 py-3 focus:outline-none focus:border-pink-500 transition file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:bg-pink-600 file:text-white file:text-xs cursor-pointer">
+              </div>
+              <button type="submit"
+                class="bg-pink-600 hover:bg-pink-500 text-white font-semibold py-3 rounded-lg transition">
+                Ajouter le manga
+              </button>
+            </form>
+          </div>
+
+          <!-- Ajouter un tome -->
+          <h2 class="text-white text-lg font-semibold mb-4">Ajouter un tome</h2>
+          <div class="bg-gray-900 border border-gray-800 rounded-2xl p-6">
+            <form (ngSubmit)="ajouterTome()" class="flex flex-col gap-4">
+              <div class="flex flex-col gap-1">
+                <label class="text-gray-300 text-sm">Manga</label>
+                <select [(ngModel)]="nouveauTome.manga_id" name="tmanga" required
+                  class="bg-gray-800 border border-gray-700 text-white rounded-lg px-4 py-3 focus:outline-none focus:border-pink-500 transition">
+                  <option [value]="null" disabled>Choisir un manga</option>
+                  @for (manga of mangas; track manga.MANGA_ID) {
+                    <option [value]="manga.MANGA_ID">{{ manga.TITRE }}</option>
+                  }
+                </select>
+              </div>
+              <div class="flex gap-3">
+                <div class="flex flex-col gap-1 w-24">
+                  <label class="text-gray-300 text-sm">Numéro</label>
+                  <input type="number" [(ngModel)]="nouveauTome.numero" name="tnum" required
+                    class="bg-gray-800 border border-gray-700 text-white rounded-lg px-4 py-3 focus:outline-none focus:border-pink-500 transition">
+                </div>
+                <div class="flex flex-col gap-1 flex-1">
+                  <label class="text-gray-300 text-sm">Titre du tome</label>
+                  <input type="text" [(ngModel)]="nouveauTome.titre" name="ttitre"
+                    placeholder="ex: L'éveil du ninja"
+                    class="bg-gray-800 border border-gray-700 text-white rounded-lg px-4 py-3 focus:outline-none focus:border-pink-500 transition">
+                </div>
+              </div>
+              <button type="submit"
+                class="bg-pink-600 hover:bg-pink-500 text-white font-semibold py-3 rounded-lg transition">
+                Ajouter le tome
+              </button>
+            </form>
+          </div>
+        </div>
+
+      </div>
+    }
+
+    <!-- USERS -->
+    @if (onglet === 'users') {
+      <div class="flex flex-col gap-3">
+        @for (user of users; track user.ID_INSCRIT) {
+          <div class="bg-gray-900 border border-gray-800 rounded-xl px-5 py-4 flex justify-between items-center">
+            <div>
+              <p class="text-white font-semibold">{{ user.PRENOM }} {{ user.NOM }}</p>
+              <p class="text-gray-400 text-sm">{{ user.EMAIL }} — Score : {{ user.SCORE_FIDELITE }}</p>
+            </div>
+            <button (click)="toggleRole(user.ID_INSCRIT)"
+              [class]="user.ROLE === 'admin' ? 'bg-violet-900/50 text-violet-300' : 'bg-gray-800 text-gray-400'"
+              class="text-xs px-3 py-1.5 rounded-lg border border-gray-700 hover:border-violet-500 transition">
+              {{ user.ROLE }}
+            </button>
+          </div>
+        }
+      </div>
+    }
+
+  </main>
+</div>
